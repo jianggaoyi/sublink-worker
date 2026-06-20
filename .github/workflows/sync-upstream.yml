@@ -27,11 +27,12 @@ jobs:
           git checkout main
           git merge upstream/main --no-edit --allow-unrelated-histories -X theirs
 
-      - name: Force use upstream lockfile
+      - name: Remove obsolete pnpm lockfile
         run: |
-          git checkout upstream/main -- pnpm-lock.yaml
-          git add pnpm-lock.yaml
-          git diff --cached --quiet || git commit -m "chore: sync lockfile from upstream"
+          if [ -f pnpm-lock.yaml ]; then
+            git rm pnpm-lock.yaml
+            git commit -m "chore: remove obsolete pnpm-lock.yaml, project now uses npm"
+          fi
 
       - name: Push
         run: git push origin main
